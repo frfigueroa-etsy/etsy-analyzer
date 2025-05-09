@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Analyzer Extension",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon.png"
+    }
+  },
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "https://www.etsy.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.etsy.com/listing/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["results.html", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
