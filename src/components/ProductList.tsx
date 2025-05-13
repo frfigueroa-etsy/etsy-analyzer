@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Product } from '../interfaces';
 import { addProductToBenchmark } from '../utils/benchmark';
+import { API_URL } from '../configs/env';
 
 interface Props {
   products: Product[];
@@ -24,7 +25,7 @@ Evaluate whether the title contains relevant keywords, if the description is eng
     `;
 
     try {
-      const response = await fetch("http://localhost:3003/analyze-seo", {
+      const response = await fetch(`${API_URL}/ai/analyze-seo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -1,4 +1,5 @@
 export async function addProductToBenchmark(product: any) {
+  console.log(product)
     if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
   
     chrome.storage.local.get(['benchmarkProducts'], (result) => {

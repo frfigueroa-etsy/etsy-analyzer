@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from './configs/env';
 
 
 const App = () => {
@@ -10,7 +11,7 @@ const App = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:3003/etsy/search?q=${encodeURIComponent(keyword)}`);
+      const response = await fetch(`${API_URL}/etsy/shopListing/search?q=${encodeURIComponent(keyword)}`);
       const data = await response.json();
 
       if (typeof chrome !== 'undefined' && chrome.storage?.local) {

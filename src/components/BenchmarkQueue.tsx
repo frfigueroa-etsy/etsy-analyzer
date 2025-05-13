@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_URL } from '../configs/env';
 
 interface BenchmarkProduct {
   listing_id: number;
@@ -32,7 +33,7 @@ const BenchmarkQueue = () => {
   const runBenchmarkAnalysis = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3003/benchmark-analyze', {
+      const response = await fetch(`${API_URL}/ai/benchmark-analyze`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
