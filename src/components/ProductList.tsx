@@ -15,7 +15,7 @@ const ProductList: React.FC<Props> = ({ products }) => {
     setLoading(product.listing_id);
 
     const prompt = `
-Analyze this Etsy product from an SEO perspective:
+Analyze and give a score from 0 to 100 of this Etsy product from an SEO perspective:
 
 Title: "${product.title}"
 Description: "${product.description || ''}"

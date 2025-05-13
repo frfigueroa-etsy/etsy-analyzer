@@ -52,7 +52,7 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
     const listingId = window.location.pathname.split('/')[2];
 
     try {
-      const response = await fetch(`${__API_URL__}/etsy/shopListing/analyze-listing`, {
+      const response = await fetch(`${__API_URL__}/ai/analyze-seo-from-listing`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -60,17 +60,15 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
         body: JSON.stringify({ listingId })
       });
 
+      console.log(response)
+
       const { result } = await response.json();
+
+      console.log(result)
 
       analysisSection.innerHTML = `
         <h3>SEO Analysis</h3>
-        <p><strong>Title:</strong> ${result.title}</p>
-        <p><strong>Description:</strong> ${result.description.slice(0, 300)}...</p>
-        <p><strong>Tags:</strong> ${result.tags.join(', ')}</p>
-        <p><strong>Views:</strong> ${result.views}</p>
-        <p><strong>Favorites:</strong> ${result.favorites}</p>
-        <p><strong>Category:</strong> ${result.taxonomy_path.join(' > ')}</p>
-        <p><strong>Handmade:</strong> ${result.who_made === 'i_did' ? 'Yes' : 'No'}</p>
+         <pre className="mb-0">${result}</pre>
       `;
       analysisSection.style.display = 'block';
 
@@ -100,7 +98,6 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
 
   addToBenchmarkButton.addEventListener('click', async () => {
     const listingId = window.location.pathname.split('/')[2];
-    console.log('PRUEBA', listingId)
 
     try {
       const response = await fetch(`${__API_URL__}/etsy/shopListing/analyze-listing`, {
