@@ -3,11 +3,12 @@ import ProductList from '../components/ProductList';
 import TagAnalysis from '../components/TagAnalysis';
 import TrendAnalysis from '../components/TredAnalysis';
 import BenchmarkQueue from '../components/BenchmarkQueue';
+import ShopInsights from '../components/ShopInsights';
 import { Product } from '../interfaces';
 
 const ResultsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark'>('results');
+  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'>('results');
 
   useEffect(() => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
@@ -22,40 +23,10 @@ const ResultsPage = () => {
     }
   }, []);
 
-  const exportToCSV = () => {
-    const header = ['Title', 'Price', 'Favorites', 'Tags'];
-    const rows = products.map(p => [
-      `"${p.title}"`,
-      (p.price.amount / 100).toFixed(2),
-      p.num_favorers,
-      `"${(p.tags || []).join(', ')}"`
-    ]);
-
-    const csvContent = [header, ...rows].map(e => e.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'etsy_analysis.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <div className="container p-3" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       <h1 className="h5 fw-bold text-dark mb-3">Etsy Analyzer - Full Results</h1>
-
-      <div className="d-flex gap-2 mb-4">
-        <button
-          onClick={exportToCSV}
-          disabled={!products.length}
-          className="btn btn-outline-success w-100"
-        >
-          💾 Export CSV
-        </button>
-      </div>
-
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
           <button
@@ -89,6 +60,14 @@ const ResultsPage = () => {
             📈 Trends
           </button>
         </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'sales' ? 'active' : ''}`}
+            onClick={() => setActiveTab('sales')}
+          >
+            💰 Sales
+          </button>
+        </li>
       </ul>
 
       <div>
@@ -96,6 +75,7 @@ const ResultsPage = () => {
         {activeTab === 'benchmark' && <BenchmarkQueue />}
         {activeTab === 'tags' && <TagAnalysis />}
         {activeTab === 'trends' && <TrendAnalysis />}
+        {activeTab === 'sales' && <ShopInsights />}
       </div>
     </div>
   );

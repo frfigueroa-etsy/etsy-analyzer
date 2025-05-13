@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Product } from '../interfaces';
 import { addProductToBenchmark } from '../utils/benchmark';
+import { API_URL } from '../configs/env';
 
 interface Props {
   products: Product[];
@@ -14,7 +15,7 @@ const ProductList: React.FC<Props> = ({ products }) => {
     setLoading(product.listing_id);
 
     const prompt = `
-Analyze this Etsy product from an SEO perspective:
+Analyze and give a score from 0 to 100 of this Etsy product from an SEO perspective:
 
 Title: "${product.title}"
 Description: "${product.description || ''}"
@@ -24,7 +25,7 @@ Evaluate whether the title contains relevant keywords, if the description is eng
     `;
 
     try {
-      const response = await fetch("http://localhost:3003/analyze-seo", {
+      const response = await fetch(`${API_URL}/ai/analyze-seo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -89,7 +90,7 @@ Evaluate whether the title contains relevant keywords, if the description is eng
           {loading === product.listing_id ? "Analyzing..." : "Analyze SEO"}
         </button>
         <button
-          className="btn btn-sm btn-success"
+          className="btn btn-sm btn-success mb-2 mx-2"
           onClick={() => addProductToBenchmark(product)}
         >
           ＋

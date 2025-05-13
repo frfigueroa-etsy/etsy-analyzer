@@ -1,5 +1,14 @@
-function waitForElement(selector, callback) {
-  const observer = new MutationObserver((mutations, observer) => {
+declare const __API_URL__: string;
+
+// interface BenchmarkProduct {
+//   listing_id: string;
+//   title: string;
+//   description: string;
+//   tags: string[];
+// }
+
+function waitForElement(selector:any, callback:any) {
+  const observer = new MutationObserver((_, observer) => {
     const element = document.querySelector(selector);
     if (element) {
       observer.disconnect();
@@ -10,7 +19,7 @@ function waitForElement(selector, callback) {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-waitForElement('[data-add-to-cart-button]', (addToCartDiv) => {
+waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
   console.log("Add to cart section detected!");
 
   // 🔍 Create Analyze SEO Button
@@ -43,7 +52,7 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv) => {
     const listingId = window.location.pathname.split('/')[2];
 
     try {
-      const response = await fetch(`http://localhost:3003/analyze-listing`, {
+      const response = await fetch(`${__API_URL__}/ai/analyze-seo-from-listing`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -51,17 +60,15 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv) => {
         body: JSON.stringify({ listingId })
       });
 
+      console.log(response)
+
       const { result } = await response.json();
+
+      console.log(result)
 
       analysisSection.innerHTML = `
         <h3>SEO Analysis</h3>
-        <p><strong>Title:</strong> ${result.title}</p>
-        <p><strong>Description:</strong> ${result.description.slice(0, 300)}...</p>
-        <p><strong>Tags:</strong> ${result.tags.join(', ')}</p>
-        <p><strong>Views:</strong> ${result.views}</p>
-        <p><strong>Favorites:</strong> ${result.favorites}</p>
-        <p><strong>Category:</strong> ${result.taxonomy_path.join(' > ')}</p>
-        <p><strong>Handmade:</strong> ${result.who_made === 'i_did' ? 'Yes' : 'No'}</p>
+         <pre className="mb-0">${result}</pre>
       `;
       analysisSection.style.display = 'block';
 
@@ -93,7 +100,7 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv) => {
     const listingId = window.location.pathname.split('/')[2];
 
     try {
-      const response = await fetch(`http://localhost:3003/analyze-listing`, {
+      const response = await fetch(`${__API_URL__}/etsy/shopListing/analyze-listing`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -101,12 +108,15 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv) => {
         body: JSON.stringify({ listingId })
       });
 
+      console.log(response)
+
       const { result } = await response.json();
+      console.log(result)
 
       if (typeof chrome !== 'undefined' && chrome.storage?.local) {
         chrome.storage.local.get(['benchmarkProducts'], (res) => {
-          let products = res.benchmarkProducts || [];
-          if (!products.find(p => p.listing_id === listingId)) {
+          let products:any[] = res.benchmarkProducts || [];
+          if (!products.find(p => p.listing_id! === listingId)) {
             products.push(result);
 
             if (products.length > 5) {
