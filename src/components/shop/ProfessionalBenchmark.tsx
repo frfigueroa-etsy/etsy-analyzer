@@ -6,23 +6,6 @@ interface Props {
   shop: ShopInterface;
 }
 
-const Indicator = ({ label, value }: { label: string; value: boolean }) => (
-  <div className="d-flex align-items-center mb-2">
-    <span
-      className="me-2"
-      style={{
-        display: 'inline-block',
-        width: '14px',
-        height: '14px',
-        borderRadius: '50%',
-        backgroundColor: value ? '#28a745' : '#dc3545', // verde o rojo
-        border: '1px solid #ccc'
-      }}
-    ></span>
-    <span>{label}</span>
-  </div>
-);
-
 const ProfessionalBenchmark = ({ shop }: Props) => {
   const [result, setResult] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,6 +41,13 @@ const ProfessionalBenchmark = ({ shop }: Props) => {
     fetchAnalysis();
   }, [shop]);
 
+  const indicators = [
+    { label: "Etsy Payments Onboarded", value: shop.is_etsy_payments_onboarded },
+    { label: "Using Structured Policies", value: shop.is_using_structured_policies },
+    { label: "Structured Policies Onboarded", value: shop.has_onboarded_structured_policies },
+    { label: "Direct Checkout Enabled", value: shop.is_direct_checkout_onboarded },
+  ];
+
   return (
     <div>
       <h5 className="fw-bold">📊 Professional Benchmark</h5>
@@ -66,10 +56,16 @@ const ProfessionalBenchmark = ({ shop }: Props) => {
       {/* Visual Checklist */}
       <div className="mb-4">
         <h6 className="fw-bold mb-2">🧾 Key Professional Indicators</h6>
-        <Indicator label="Etsy Payments Onboarded" value={shop.is_etsy_payments_onboarded} />
-        <Indicator label="Using Structured Policies" value={shop.is_using_structured_policies} />
-        <Indicator label="Structured Policies Onboarded" value={shop.has_onboarded_structured_policies} />
-        <Indicator label="Direct Checkout Enabled" value={shop.is_direct_checkout_onboarded} />
+        <ul className="list-group">
+          {indicators.map(({ label, value }) => (
+            <li className="list-group-item d-flex justify-content-between align-items-center" key={label}>
+              {label}
+              <span className={`badge ${value ? 'bg-success' : 'bg-danger'}`}>
+                {value ? '✔️' : '❌'}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* AI Analysis */}

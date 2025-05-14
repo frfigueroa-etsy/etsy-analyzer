@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react';
 import { ShopInterface } from '../../interfaces';
 import { API_URL } from '../../configs/env';
 import ReactMarkdown from 'react-markdown';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
 interface Props {
   shop: ShopInterface;
@@ -11,6 +18,14 @@ const CommercialAppeal = ({ shop }: Props) => {
   const [analysis, setAnalysis] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const presenceData = [
+    { name: 'Announcement', value: shop.announcement ? 1 : 0 },
+    { name: 'Sale Message', value: shop.sale_message ? 1 : 0 },
+    { name: 'Digital Sale Message', value: shop.digital_sale_message ? 1 : 0 }
+  ];
+
+  const COLORS = ['#00C49F', '#FFBB28', '#FF8042'];
 
   useEffect(() => {
     const runAnalysis = async () => {
@@ -57,6 +72,29 @@ const CommercialAppeal = ({ shop }: Props) => {
       <div className="mb-3">
         <h6 className="text-primary mb-1">{shop.shop_name}</h6>
         <p className="mb-2"><strong>Title:</strong> {shop.title || <em>No title set</em>}</p>
+      </div>
+
+      {/* Pie chart of presence elements */}
+      <div className="mb-4">
+        <h6 className="fw-semibold">📊 Visual Presence Overview</h6>
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart>
+            <Pie
+              data={presenceData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label
+            >
+              {presenceData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Commercial presence checklist */}

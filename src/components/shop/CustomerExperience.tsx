@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ShopInterface } from '../../interfaces';
 import { API_URL } from '../../configs/env';
 import ReactMarkdown from 'react-markdown';
+import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
 
 interface Props {
   shop: ShopInterface;
@@ -14,7 +15,7 @@ const renderStars = (rating: number) => {
   return (
     <>
       {'⭐️'.repeat(fullStars)}
-      {halfStar && '⭐️'}{/* Optional half if needed */}
+      {halfStar && '⭐️'}
       {'☆'.repeat(emptyStars)}
     </>
   );
@@ -57,6 +58,14 @@ const CustomerExperience = ({ shop }: Props) => {
     fetchAnalysis();
   }, [shop]);
 
+  const radialData = [
+    {
+      name: 'Rating',
+      value: shop.review_average,
+      fill: '#ffc107'
+    }
+  ];
+
   return (
     <div>
       {/* Review Count */}
@@ -66,9 +75,7 @@ const CustomerExperience = ({ shop }: Props) => {
           <div
             className="progress-bar bg-info"
             role="progressbar"
-            style={{
-              width: `${Math.min(shop.review_count, 500) / 5}%`,
-            }}
+            style={{ width: `${Math.min(shop.review_count, 500) / 5}%` }}
           >
             {shop.review_count}
           </div>
@@ -76,18 +83,34 @@ const CustomerExperience = ({ shop }: Props) => {
       </div>
 
       {/* Review Average */}
-      <div className="mb-3">
+      <div className="mb-4">
         <h6 className="fw-semibold">Average Rating</h6>
-        <div>
-          {renderStars(shop.review_average)} <span className="ms-2">({shop.review_average.toFixed(2)} / 5)</span>
+        <div className="mb-2">
+          {renderStars(shop.review_average)}{' '}
+          <span className="ms-2">({shop.review_average.toFixed(2)} / 5)</span>
         </div>
-        <div className="progress mt-1" style={{ height: '8px' }}>
-          <div
-            className="progress-bar bg-warning"
-            role="progressbar"
-            style={{ width: `${(shop.review_average / 5) * 100}%` }}
-          />
-        </div>
+        <ResponsiveContainer width="100%" height={200}>
+          <RadialBarChart
+            innerRadius="60%"
+            outerRadius="100%"
+            barSize={15}
+            data={radialData}
+            startAngle={180}
+            endAngle={0}
+          >
+            <RadialBar
+              {...({ minAngle: 15 } as any)}
+              clockWise
+              dataKey="value"
+            />
+            <Legend
+              iconSize={10}
+              layout="vertical"
+              verticalAlign="middle"
+              wrapperStyle={{ top: 0, left: 350, lineHeight: '24px' }}
+            />
+          </RadialBarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Custom Requests */}

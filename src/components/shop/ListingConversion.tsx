@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { ShopInterface } from '../../interfaces';
 import { API_URL } from '../../configs/env';
 import ReactMarkdown from 'react-markdown';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Props {
   shop: ShopInterface;
 }
+
+const COLORS = ['#00bcd4', '#9e9e9e'];
 
 const ListingConversion = ({ shop }: Props) => {
   const [result, setResult] = useState<string>('');
@@ -15,6 +18,12 @@ const ListingConversion = ({ shop }: Props) => {
     shop.listing_active_count > 0
       ? (shop.transaction_sold_count / shop.listing_active_count) * 100
       : 0;
+
+  const digitalPercent = shop.listing_active_count
+    ? (shop.digital_listing_count / shop.listing_active_count) * 100
+    : 0;
+
+  const physicalPercent = 100 - digitalPercent;
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -50,12 +59,6 @@ const ListingConversion = ({ shop }: Props) => {
     fetchAnalysis();
   }, [shop]);
 
-  const digitalPercent = shop.listing_active_count
-    ? (shop.digital_listing_count / shop.listing_active_count) * 100
-    : 0;
-
-  const physicalPercent = 100 - digitalPercent;
-
   return (
     <div>
       <h5 className="fw-bold">🔄 Listing Conversion</h5>
@@ -76,43 +79,44 @@ const ListingConversion = ({ shop }: Props) => {
         </div>
       </div>
 
-      {/* Digital vs Physical Pie (simple bar) */}
-      <div className="mb-3">
-        <h6>📊 Digital vs Physical</h6>
-        <div className="progress" style={{ height: '20px' }}>
-          <div
-            className="progress-bar bg-info"
-            style={{ width: `${digitalPercent}%` }}
-            role="progressbar"
-          >
-            {digitalPercent.toFixed(1)}% Digital
-          </div>
-          <div
-            className="progress-bar bg-secondary"
-            style={{ width: `${physicalPercent}%` }}
-            role="progressbar"
-          >
-            {physicalPercent.toFixed(1)}% Physical
-          </div>
-        </div>
+      {/* Digital vs Physical Pie Chart */}
+      <div className="mb-4">
+        <h6>📊 Digital vs Physical Listings</h6>
+        <ResponsiveContainer width="100%" height={200}>
+          <PieChart>
+            <Pie
+              data={[{ name: 'Digital', value: digitalPercent }, { name: 'Physical', value: physicalPercent }]}
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+            >
+              {COLORS.map((color, index) => (
+                <Cell key={`cell-${index}`} fill={color} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* Conversion Indicator */}
-      <div className="mb-3">
+      {/* Conversion Rate Bar Chart */}
+      <div className="mb-4">
         <h6>📈 Conversion Rate</h6>
-        <p>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={[{ name: 'Conversion', rate: conversionRate }]}>
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+            <Tooltip formatter={(value: any) => `${value.toFixed(2)}%`} />
+            <Bar dataKey="rate" fill="#ffc107" />
+          </BarChart>
+        </ResponsiveContainer>
+        <p className="text-center">
           <strong>{conversionRate.toFixed(1)}%</strong>{' '}
           <small className="text-muted">
             ({shop.transaction_sold_count} sold / {shop.listing_active_count} active)
           </small>
         </p>
-        <div className="progress" style={{ height: '8px' }}>
-          <div
-            className="progress-bar bg-warning"
-            role="progressbar"
-            style={{ width: `${Math.min(conversionRate, 100)}%` }}
-          />
-        </div>
       </div>
 
       {/* AI Analysis */}
