@@ -3,7 +3,7 @@ import FinancialAnalysis from '../sales/FinancialAnalysis';
 import ProductSalesAnalysis from '../sales/ProductSalesAnalysis';
 import StorePerformance from '../sales/StorePerformance';
 
-const ShopInsights = () => {
+const SalesInsights = () => {
   const [activeTab, setActiveTab] = useState<'financial' | 'products' | 'store'>('financial');
 
   return (
@@ -46,4 +46,4 @@ const ShopInsights = () => {
   );
 };
 
-export default ShopInsights;
+export default SalesInsights;

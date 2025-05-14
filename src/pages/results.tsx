@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ProductList from '../components/tabs/ProductList';
 import Benchmark from '../components/tabs/Benchmark';
 import ShopAnalysis from '../components/tabs/ShopAnalysis';
-import ShopInsights from '../components/tabs/ShopInsights';
+import SalesInsights from '../components/tabs/SalesInsights';
 import SearchBar from '../components/SearchBar';
 import { ProductInterface } from '../interfaces';
 
@@ -58,7 +58,7 @@ const ResultsPage = () => {
         {activeTab === 'results' && <ProductList products={products} />}
         {activeTab === 'benchmark' && <Benchmark />}
         {activeTab === 'shop' && <ShopAnalysis />}
-        {activeTab === 'sales' && <ShopInsights />}
+        {activeTab === 'sales' && <SalesInsights />}
       </div>
     </div>
   );
