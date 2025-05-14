@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ProductInterface } from '../../interfaces';
 import { addProductToBenchmark } from '../../utils/benchmark';
 import { selectProductShop } from '../../utils/shop';
+import { selectProduct } from '../../utils/product';
 import { API_URL } from '../../configs/env';
 import ReactMarkdown from 'react-markdown';
 
@@ -82,10 +83,13 @@ Evaluate whether the title contains relevant keywords, if the description is eng
               {loading ? "Analyzing..." : "Analyze SEO"}
             </button>
             <button className="btn btn-sm btn-success" onClick={() => addProductToBenchmark(product)}>
-              + Add to Benchmark
+              + Add to Benchmark Analysis
             </button>
             <button className="btn btn-sm btn-secondary" onClick={() => selectProductShop(product)}>
-              + Add to ShopAnalysis
+              + Add to Shop Analysis
+            </button>
+            <button className="btn btn-sm btn-warning" onClick={() => selectProduct(product)}>
+              + Add to Product Analysis
             </button>
           </div>
 

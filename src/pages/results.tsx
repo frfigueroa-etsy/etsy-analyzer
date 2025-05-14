@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import ProductList from '../components/tabs/ProductList';
 import Benchmark from '../components/tabs/Benchmark';
 import ShopAnalysis from '../components/tabs/ShopAnalysis';
+import ProductAnalysis from '../components/tabs/ProductAnalysis';
 import SalesInsights from '../components/tabs/SalesInsights';
 import SearchBar from '../components/SearchBar';
 import { ProductInterface } from '../interfaces';
 
 const ResultsPage = () => {
   const [products, setProducts] = useState<ProductInterface[]>([]);
-  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop'>('results');
+  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop' | 'product'>('results');
 
   const loadProducts = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
@@ -43,6 +44,11 @@ const ResultsPage = () => {
           </button>
         </li>
         <li className="nav-item">
+          <button className={`nav-link ${activeTab === 'product' ? 'active' : ''}`} onClick={() => setActiveTab('product')}>
+            🎁 Product
+          </button>
+        </li>
+        <li className="nav-item">
           <button className={`nav-link ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
             🛍️ Shop
           </button>
@@ -58,6 +64,7 @@ const ResultsPage = () => {
         {activeTab === 'results' && <ProductList products={products} />}
         {activeTab === 'benchmark' && <Benchmark />}
         {activeTab === 'shop' && <ShopAnalysis />}
+        {activeTab === 'product' && <ProductAnalysis />}
         {activeTab === 'sales' && <SalesInsights />}
       </div>
     </div>

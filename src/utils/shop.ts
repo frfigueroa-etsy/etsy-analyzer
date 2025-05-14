@@ -6,8 +6,6 @@ export async function selectProductShop(product: ProductInterface) {
   
     chrome.storage.local.get(['shopId'], (result) => {
       const storedShopId = result.shopId ?? null;
-  
-      // ✅ Si ya está seleccionado ese shop_id, no hacer nada
       if (storedShopId === product.shop_id) {
         return;
       }
