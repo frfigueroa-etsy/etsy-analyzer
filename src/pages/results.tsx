@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import ProductList from '../components/tabs/ProductList';
-import TagAnalysis from '../components/tabs/TagAnalysis';
-import TrendAnalysis from '../components/tabs/TredAnalysis';
-import BenchmarkQueue from '../components/tabs/BenchmarkQueue';
+import Benchmark from '../components/tabs/Benchmark';
+import ShopAnalysis from '../components/tabs/ShopAnalysis';
 import ShopInsights from '../components/tabs/ShopInsights';
 import SearchBar from '../components/SearchBar';
 import { Product } from '../interfaces';
 
 const ResultsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'>('results');
+  const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop'>('results');
 
   const loadProducts = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
@@ -44,13 +43,8 @@ const ResultsPage = () => {
           </button>
         </li>
         <li className="nav-item">
-          <button className={`nav-link ${activeTab === 'tags' ? 'active' : ''}`} onClick={() => setActiveTab('tags')}>
-            🏷️ Tags
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className={`nav-link ${activeTab === 'trends' ? 'active' : ''}`} onClick={() => setActiveTab('trends')}>
-            📈 Trends
+          <button className={`nav-link ${activeTab === 'shop' ? 'active' : ''}`} onClick={() => setActiveTab('shop')}>
+            🛍️ Shop
           </button>
         </li>
         <li className="nav-item">
@@ -62,9 +56,8 @@ const ResultsPage = () => {
 
       <div>
         {activeTab === 'results' && <ProductList products={products} />}
-        {activeTab === 'benchmark' && <BenchmarkQueue />}
-        {activeTab === 'tags' && <TagAnalysis />}
-        {activeTab === 'trends' && <TrendAnalysis />}
+        {activeTab === 'benchmark' && <Benchmark />}
+        {activeTab === 'shop' && <ShopAnalysis />}
         {activeTab === 'sales' && <ShopInsights />}
       </div>
     </div>
