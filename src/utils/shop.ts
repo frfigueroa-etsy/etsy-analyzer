@@ -1,20 +1,18 @@
 import { ProductInterface } from '../interfaces';
 
 export async function selectProductShop(product: ProductInterface) {
-    console.log(product)
-      if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
-    
-      chrome.storage.local.get(['productShop'], (result) => {
-        const shop = result.productShop || null;
-    
-        // Si ya está agregado, no hacer nada
-        if (
-            shop.listing_id === product.listing_id 
-            && shop.shop_id === product.shop_id ) {
-          return;
-        }
-
-    
-        chrome.storage.local.set({ productShop: shop });
-      });
-    }
+  
+    if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
+  
+    chrome.storage.local.get(['shopId'], (result) => {
+      const storedShopId = result.shopId ?? null;
+  
+      // ✅ Si ya está seleccionado ese shop_id, no hacer nada
+      if (storedShopId === product.shop_id) {
+        return;
+      }
+  
+      console.log('Saving new shop_id:', product.shop_id);
+      chrome.storage.local.set({ shopId: product.shop_id });
+    });
+  }

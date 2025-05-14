@@ -1,6 +1,5 @@
 import { ProductInterface } from '../interfaces';
 export async function addProductToBenchmark(product: ProductInterface) {
-  console.log(product)
     if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
   
     chrome.storage.local.get(['benchmarkProducts'], (result) => {
