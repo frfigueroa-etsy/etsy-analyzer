@@ -1,4 +1,4 @@
-export interface BenchmarkProduct {
+export interface BenchmarkProductInterface {
     listing_id: number;
     title: string;
     description: string;

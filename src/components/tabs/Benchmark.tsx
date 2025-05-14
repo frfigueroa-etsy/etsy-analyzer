@@ -4,11 +4,11 @@ import ReactMarkdown from 'react-markdown';
 import Queue from '../benchmark/Queue';
 import TagAnalysis from './TagAnalysis';
 import TrendAnalysis from './TredAnalysis';
-import {BenchmarkProduct } from '../../interfaces'
+import {BenchmarkProductInterface } from '../../interfaces'
 
 
 const Benchmark = () => {
-  const [benchmark, setBenchmark] = useState<BenchmarkProduct[]>([]);
+  const [benchmark, setBenchmark] = useState<BenchmarkProductInterface[]>([]);
   const [benchmarkResult, setBenchmarkResult] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<'queue' | 'tags' | 'trends'>('queue');

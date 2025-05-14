@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Product } from '../../interfaces';
+import { ProductInterface } from '../../interfaces';
 
 const TagAnalysis = () => {
   const [tagFrequencies, setTagFrequencies] = useState<{ text: string; value: number }[]>([]);
@@ -13,7 +13,7 @@ const TagAnalysis = () => {
     }
   }, []);
 
-  const computeTagData = (products: Product[]) => {
+  const computeTagData = (products: ProductInterface[]) => {
     const tagCount: Record<string, number> = {};
 
     products.forEach((p) => {

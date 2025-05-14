@@ -4,15 +4,15 @@ import Benchmark from '../components/tabs/Benchmark';
 import ShopAnalysis from '../components/tabs/ShopAnalysis';
 import ShopInsights from '../components/tabs/ShopInsights';
 import SearchBar from '../components/SearchBar';
-import { Product } from '../interfaces';
+import { ProductInterface } from '../interfaces';
 
 const ResultsPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductInterface[]>([]);
   const [activeTab, setActiveTab] = useState<'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop'>('results');
 
   const loadProducts = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
-      chrome.storage.local.get(['products'], (result: { products?: Product[] }) => {
+      chrome.storage.local.get(['products'], (result: { products?: ProductInterface[] }) => {
         if (result.products) {
           setProducts(result.products);
         } else {

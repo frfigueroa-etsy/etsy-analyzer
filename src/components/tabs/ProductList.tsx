@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Product } from '../../interfaces';
+import { ProductInterface } from '../../interfaces';
 import { addProductToBenchmark } from '../../utils/benchmark';
+import { selectProductShop } from '../../utils/shop';
 import { API_URL } from '../../configs/env';
 
 interface Props {
-  products: Product[];
+  products: ProductInterface[];
 }
 
 const ProductList: React.FC<Props> = ({ products }) => {
   const [seoAnalysis, setSeoAnalysis] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState<number | null>(null);
 
-  const analyzeSEO = async (product: Product) => {
+  const analyzeSEO = async (product: ProductInterface) => {
     setLoading(product.listing_id);
 
     const prompt = `
@@ -93,7 +94,13 @@ Evaluate whether the title contains relevant keywords, if the description is eng
           className="btn btn-sm btn-success mb-2 mx-2"
           onClick={() => addProductToBenchmark(product)}
         >
-          ＋
+          + Add to Benchmark
+        </button>
+        <button
+          className="btn btn-sm btn-secondary mb-2 mx-2"
+          onClick={() => selectProductShop(product)}
+        >
+          + Add to ShopAnalysis
         </button>
 
         {seoAnalysis[product.listing_id] && (

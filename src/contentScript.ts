@@ -1,11 +1,6 @@
 declare const __API_URL__: string;
 
-// interface BenchmarkProduct {
-//   listing_id: string;
-//   title: string;
-//   description: string;
-//   tags: string[];
-// }
+
 
 function waitForElement(selector:any, callback:any) {
   const observer = new MutationObserver((_, observer) => {

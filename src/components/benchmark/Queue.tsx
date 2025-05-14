@@ -1,7 +1,7 @@
-import {BenchmarkProduct } from '../../interfaces'
+import {BenchmarkProductInterface } from '../../interfaces'
 
 interface QueueProps {
-    benchmark: BenchmarkProduct[];
+    benchmark: BenchmarkProductInterface[];
     onRemove: (listing_id: number) => void;
     onClear: () => void;
   }
