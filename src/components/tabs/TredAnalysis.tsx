@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter, CartesianGrid, Legend } from 'recharts';
 import { PieChart, Pie, Cell } from 'recharts';
-import { Product } from '../interfaces';
+import { Product } from '../../interfaces';
 
 const TrendAnalysis = () => {
   const [products, setProducts] = useState<Product[]>([]);

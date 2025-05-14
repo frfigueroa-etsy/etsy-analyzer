@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Product } from '../interfaces';
-import { addProductToBenchmark } from '../utils/benchmark';
-import { API_URL } from '../configs/env';
+import { Product } from '../../interfaces';
+import { addProductToBenchmark } from '../../utils/benchmark';
+import { API_URL } from '../../configs/env';
 
 interface Props {
   products: Product[];

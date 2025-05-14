@@ -17,8 +17,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 400px;
-  min-height: 600px;
+  min-width: 200px;
+  min-height: 200px;
 }
 
 .react-wordcloud {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Product } from '../interfaces';
+import { Product } from '../../interfaces';
 
 const TagAnalysis = () => {
   const [tagFrequencies, setTagFrequencies] = useState<{ text: string; value: number }[]>([]);

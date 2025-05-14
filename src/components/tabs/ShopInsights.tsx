@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import FinancialAnalysis from './sales/FinancialAnalysis';
-import ProductSalesAnalysis from './sales/ProductSalesAnalysis';
-import StorePerformance from './sales/StorePerformance';
+import FinancialAnalysis from '../sales/FinancialAnalysis';
+import ProductSalesAnalysis from '../sales/ProductSalesAnalysis';
+import StorePerformance from '../sales/StorePerformance';
 
 const ShopInsights = () => {
   const [activeTab, setActiveTab] = useState<'financial' | 'products' | 'store'>('financial');
