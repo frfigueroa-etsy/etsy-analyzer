@@ -28,6 +28,11 @@ const ShopAnalysis = () => {
     }
   }, []);
 
+  const formatDate = (timestamp: number) => {
+    if (!timestamp) return 'N/A';
+    return new Date(timestamp * 1000).toLocaleDateString();
+  };
+
   return (
     <div className="container p-3" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       <div className="d-flex align-items-center justify-content-between mb-3">
@@ -54,6 +59,23 @@ const ShopAnalysis = () => {
             className="img-fluid rounded"
             style={{ maxHeight: '120px' }}
           />
+        </div>
+      )}
+
+      {shop && (
+        <div className="mb-4 p-3 bg-white border rounded shadow-sm">
+          <h6 className="fw-semibold mb-3">📋 Summary Panel</h6>
+          <div className="row">
+            <div className="col-md-4">
+              <strong>🗓 Created:</strong> {formatDate(shop.create_date)}
+            </div>
+            <div className="col-md-4">
+              <strong>🌍 Country:</strong> {shop.shop_location_country_iso || 'N/A'}
+            </div>
+            <div className="col-md-4">
+              <strong>❤️ Favorites:</strong> {shop.num_favorers ?? 0}
+            </div>
+          </div>
         </div>
       )}
 
