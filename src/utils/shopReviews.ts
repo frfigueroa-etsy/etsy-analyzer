@@ -1,10 +1,10 @@
 import { ReviewInterface } from '../interfaces';
 
-export async function addListingReviewToAnalysis(review: ReviewInterface) {
+export async function addShopReviewToAnalysis(review: ReviewInterface) {
   if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
 
-  chrome.storage.local.get(['reviewAnalysisQueue'], (result) => {
-    let queue = result.reviewAnalysisQueue || [];
+  chrome.storage.local.get(['reviewShopAnalysisQueue'], (result) => {
+    let queue = result.reviewShopAnalysisQueue || [];
 
     const isDuplicate = queue.some(
       (r: ReviewInterface) =>
@@ -20,6 +20,6 @@ export async function addListingReviewToAnalysis(review: ReviewInterface) {
       queue = queue.slice(queue.length - 10);
     }
 
-    chrome.storage.local.set({ reviewAnalysisQueue: queue });
+    chrome.storage.local.set({ reviewShopAnalysisQueue: queue });
   });
 }

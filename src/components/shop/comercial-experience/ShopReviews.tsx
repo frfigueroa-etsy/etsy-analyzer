@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { API_URL } from '../../configs/env';
+import { API_URL } from '../../../configs/env';
 import ReactMarkdown from 'react-markdown';
-import { ReviewInterface } from '../../interfaces';
-import { addListingReviewToAnalysis } from '../../utils/listingReview';
+import { ReviewInterface } from '../../../interfaces';
+import { addShopReviewToAnalysis } from '../../../utils/shopReviews';
 
 interface Props {
-  product: { listing_id: number; title: string };
+  shopId: number;
 }
 
-const ProductReviews = ({ product }: Props) => {
+const ShopReviews = ({ shopId }: Props) => {
   const [reviews, setReviews] = useState<ReviewInterface[]>([]);
   const [analysis, setAnalysis] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -16,8 +16,8 @@ const ProductReviews = ({ product }: Props) => {
 
   const updateReviewCount = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
-      chrome.storage.local.get(['reviewAnalysisQueue'], (result) => {
-        const queue = result.reviewAnalysisQueue || [];
+      chrome.storage.local.get(['reviewShopAnalysisQueue'], (result) => {
+        const queue = result.reviewShopAnalysisQueue || [];
         setSelectedCount(queue.length);
       });
     }
@@ -26,55 +26,51 @@ const ProductReviews = ({ product }: Props) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`${API_URL}/etsy/shopListing/reviews/listing/${product.listing_id}`);
+        const res = await fetch(`${API_URL}/etsy/shop/reviews/${shopId}`);
         const data = await res.json();
         setReviews(data.results || []);
       } catch (error) {
-        console.error('Error loading reviews:', error);
+        console.error('Error loading shop reviews:', error);
       }
     };
 
     fetchReviews();
     updateReviewCount();
-  }, [product.listing_id]);
+  }, [shopId]);
 
   const runReviewAnalysis = async () => {
     setLoading(true);
-    try {
-      if (typeof chrome === 'undefined' || !chrome.storage?.local) {
-        setAnalysis('Chrome storage not available.');
+    if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
+
+    chrome.storage.local.get(['reviewShopAnalysisQueue'], async (result) => {
+      const queue: ReviewInterface[] = result.reviewShopAnalysisQueue || [];
+
+      if (!queue.length) {
+        setAnalysis('Review analysis queue is empty.');
+        setLoading(false);
         return;
       }
 
-      chrome.storage.local.get(['reviewAnalysisQueue'], async (result) => {
-        const queue: ReviewInterface[] = result.reviewAnalysisQueue || [];
-
-        if (!queue.length) {
-          setAnalysis('Review analysis queue is empty.');
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(`${API_URL}/ai/analyze-listing-reviews`, {
+      try {
+        const response = await fetch(`${API_URL}/ai/analyze-shop-reviews`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reviews: queue })
         });
-
         const data = await response.json();
         setAnalysis(data.result || 'No analysis available.');
-        setLoading(false);
-      });
-    } catch (err) {
-      console.error('Storage access error:', err);
-      setAnalysis('Error accessing local review data.');
+      } catch (err) {
+        console.error('Error analyzing shop reviews:', err);
+        setAnalysis('Error analyzing reviews.');
+      }
+
       setLoading(false);
-    }
+    });
   };
 
   const clearReviewAnalysisQueue = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
-      chrome.storage.local.set({ reviewAnalysisQueue: [] }, () => {
+      chrome.storage.local.set({ reviewShopAnalysisQueue: [] }, () => {
         setSelectedCount(0);
         setAnalysis('');
       });
@@ -84,19 +80,19 @@ const ProductReviews = ({ product }: Props) => {
   const removeReviewFromAnalysis = (reviewToRemove: ReviewInterface) => {
     if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
 
-    chrome.storage.local.get(['reviewAnalysisQueue'], (result) => {
-      let queue = result.reviewAnalysisQueue || [];
+    chrome.storage.local.get(['reviewShopAnalysisQueue'], (result) => {
+      let queue = result.reviewShopAnalysisQueue || [];
       queue = queue.filter(
         (r: ReviewInterface) =>
-          r.created_timestamp !== reviewToRemove.created_timestamp || r.listing_id !== reviewToRemove.listing_id
+          r.created_timestamp !== reviewToRemove.created_timestamp || r.shop_id !== reviewToRemove.shop_id
       );
-      chrome.storage.local.set({ reviewAnalysisQueue: queue }, updateReviewCount);
+      chrome.storage.local.set({ reviewShopAnalysisQueue: queue }, updateReviewCount);
     });
   };
 
   const handleAddToAnalysis = (review: ReviewInterface) => {
-    addListingReviewToAnalysis(review);
-    setTimeout(updateReviewCount, 100); // Small delay to wait for storage write
+    addShopReviewToAnalysis(review);
+    setTimeout(updateReviewCount, 100);
   };
 
   return (
@@ -125,7 +121,7 @@ const ProductReviews = ({ product }: Props) => {
         <h6 className="fw-bold">⭐ Customer Reviews</h6>
         <ul className="list-group">
           {reviews.map((review) => (
-            <li key={`${review.listing_id}-${review.created_timestamp}`} className="list-group-item">
+            <li key={`${review.shop_id}-${review.created_timestamp}`} className="list-group-item">
               <p className="small text-muted mb-1">{review.review}</p>
               <div className="d-flex justify-content-between align-items-center">
                 <span className="text-warning">Rating: {review.rating} / 5</span>
@@ -152,4 +148,4 @@ const ProductReviews = ({ product }: Props) => {
   );
 };
 
-export default ProductReviews;
+export default ShopReviews;

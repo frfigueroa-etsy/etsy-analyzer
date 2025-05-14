@@ -5,7 +5,7 @@ import { ProductInterface } from '../../interfaces';
 import { API_URL } from '../../configs/env';
 
 const ProductAnalysis = () => {
-  const [activeTab, setActiveTab] = useState<'seo' | 'reviews'>('seo');
+  const [activeTab, setActiveTab] = useState<'seo' | 'reviews'>('reviews');
   const [product, setProduct] = useState<ProductInterface | null>(null);
 
   useEffect(() => {
@@ -71,26 +71,26 @@ const ProductAnalysis = () => {
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
           <button
-            className={`nav-link ${activeTab === 'seo' ? 'active' : ''}`}
-            onClick={() => setActiveTab('seo')}
-          >
-            🧠 SEO Analysis
-          </button>
-        </li>
-        <li className="nav-item">
-          <button
             className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setActiveTab('reviews')}
           >
             ⭐ Reviews
           </button>
         </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'seo' ? 'active' : ''}`}
+            onClick={() => setActiveTab('seo')}
+          >
+            🧠 SEO Analysis
+          </button>
+        </li>
       </ul>
 
       {product ? (
         <>
-          {activeTab === 'seo' && <SEOAnalysisTab product={product} />}
           {activeTab === 'reviews' && <ProductReviews product={product} />}
+          {activeTab === 'seo' && <SEOAnalysisTab product={product} />}
         </>
       ) : (
         <p className="text-muted">Loading product data...</p>

@@ -1,4 +1,4 @@
-export interface ProductReviewInterface {
+export interface ReviewInterface {
     shop_id: number;
     listing_id: number;
     rating: number;
@@ -9,4 +9,8 @@ export interface ProductReviewInterface {
     created_timestamp: number;
     update_timestamp: number;
     updated_timestamp: number;
+  
+    // (shop review)
+    transaction_id?: number;
+    buyer_user_id?: number;
   }
