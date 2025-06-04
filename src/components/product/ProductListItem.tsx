@@ -50,7 +50,7 @@ const ProductListItem: React.FC<Props> = ({ product }) => {
             <button className="btn btn-sm btn-success" onClick={() => addProductToBenchmark(product)}>
               + Add to Benchmark Analysis
             </button>
-            <button className="btn btn-sm btn-secondary" onClick={() => selectProductShop(product)}>
+            <button className="btn btn-sm btn-info" onClick={() => selectProductShop(product)}>
               + Add to Shop Analysis
             </button>
             <button className="btn btn-sm btn-warning" onClick={() => selectProduct(product)}>

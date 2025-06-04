@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import SEOAnalysisTab from '../product/SEOAnalysisTab';
 import ProductReviews from '../product/ProductReviews';
+import ProductMediaTab from '../product/ProductMediaTab';
 import { ProductInterface } from '../../interfaces';
 import { API_URL } from '../../configs/env';
 
 const ProductAnalysis = () => {
-  const [activeTab, setActiveTab] = useState<'seo' | 'reviews'>('reviews');
+  const [activeTab, setActiveTab] = useState<'seo' | 'reviews' | 'media'>('reviews');
   const [product, setProduct] = useState<ProductInterface | null>(null);
 
   useEffect(() => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
       chrome.storage.local.get(['listingId'], async (result) => {
         const listingId = result.listingId;
-        console.log('Fetching listingId',listingId)
         if (!listingId) return;
 
         try {
@@ -43,19 +43,10 @@ const ProductAnalysis = () => {
         )}
         <div>
           <h5 className="mb-1 fw-semibold">{p.title}</h5>
-          <p className="mb-1 text-muted">
-            💰 ${(p.price.amount / 100).toFixed(2)} USD
-          </p>
-          <p className="mb-1 text-muted">
-            ❤️ {p.num_favorers} favorites
-          </p>
+          <p className="mb-1 text-muted">💰 ${(p.price.amount / 100).toFixed(2)} USD</p>
+          <p className="mb-1 text-muted">❤️ {p.num_favorers} favorites</p>
           {p.url && (
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-sm btn-outline-primary mt-1"
-            >
+            <a href={p.url} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-primary mt-1">
               🔗 View on Etsy
             </a>
           )}
@@ -70,19 +61,18 @@ const ProductAnalysis = () => {
 
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`}
-            onClick={() => setActiveTab('reviews')}
-          >
+          <button className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`} onClick={() => setActiveTab('reviews')}>
             ⭐ Reviews
           </button>
         </li>
         <li className="nav-item">
-          <button
-            className={`nav-link ${activeTab === 'seo' ? 'active' : ''}`}
-            onClick={() => setActiveTab('seo')}
-          >
+          <button className={`nav-link ${activeTab === 'seo' ? 'active' : ''}`} onClick={() => setActiveTab('seo')}>
             🧠 SEO Analysis
+          </button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link ${activeTab === 'media' ? 'active' : ''}`} onClick={() => setActiveTab('media')}>
+            📸 Media
           </button>
         </li>
       </ul>
@@ -91,6 +81,7 @@ const ProductAnalysis = () => {
         <>
           {activeTab === 'reviews' && <ProductReviews product={product} />}
           {activeTab === 'seo' && <SEOAnalysisTab product={product} />}
+          {activeTab === 'media' && <ProductMediaTab product={product} />}
         </>
       ) : (
         <p className="text-muted">Loading product data...</p>

@@ -1,8 +1,6 @@
 declare const __API_URL__: string;
 
-
-
-function waitForElement(selector:any, callback:any) {
+function waitForElement(selector: any, callback: any) {
   const observer = new MutationObserver((_, observer) => {
     const element = document.querySelector(selector);
     if (element) {
@@ -14,24 +12,29 @@ function waitForElement(selector:any, callback:any) {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
+waitForElement('[data-add-to-cart-button]', (addToCartDiv: any) => {
   console.log("Add to cart section detected!");
 
-  // 🔍 Create Analyze SEO Button
-  const analyzeButton = document.createElement('button');
-  analyzeButton.innerText = '🔍 Analyze SEO';
-  analyzeButton.style.marginTop = '10px';
-  analyzeButton.style.width = '100%';
-  analyzeButton.style.padding = '10px';
-  analyzeButton.style.backgroundColor = '#ff9900';
-  analyzeButton.style.color = 'white';
-  analyzeButton.style.border = 'none';
-  analyzeButton.style.borderRadius = '5px';
-  analyzeButton.style.cursor = 'pointer';
-  analyzeButton.style.fontSize = '16px';
+  const createStyledButton = (text: string, backgroundColor: string) => {
+    const btn = document.createElement('button');
+    btn.innerText = text;
+    btn.style.marginTop = '6px';
+    btn.style.width = '100%';
+    btn.style.padding = '10px';
+    btn.style.backgroundColor = backgroundColor;
+    btn.style.color = 'white';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '999px';
+    btn.style.cursor = 'pointer';
+    btn.style.fontSize = '14px';
+    btn.style.fontWeight = 'bold';
+    return btn;
+  };
+
+  // 🔍 Analyze SEO
+  const analyzeButton = createStyledButton('🔍 Analyze SEO', '#007bff');
   addToCartDiv.appendChild(analyzeButton);
 
-  // Section to display analysis
   const analysisSection = document.createElement('div');
   analysisSection.style.marginTop = '15px';
   analysisSection.style.padding = '10px';
@@ -43,30 +46,21 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
   analyzeButton.addEventListener('click', async () => {
     analyzeButton.disabled = true;
     analyzeButton.innerText = 'Analyzing...';
-
     const listingId = window.location.pathname.split('/')[2];
 
     try {
       const response = await fetch(`${__API_URL__}/ai/analyze-seo-from-listing`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId })
       });
 
-      console.log(response)
-
       const { result } = await response.json();
-
-      console.log(result)
-
       analysisSection.innerHTML = `
         <h3>SEO Analysis</h3>
-         <pre className="mb-0">${result}</pre>
+        <pre>${result}</pre>
       `;
       analysisSection.style.display = 'block';
-
     } catch (error) {
       console.error('Error fetching analysis:', error);
       analysisSection.innerHTML = '<p style="color:red;">Error analyzing product.</p>';
@@ -77,47 +71,30 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
     analyzeButton.innerText = '🔍 Analyze SEO';
   });
 
-  // ➕ Create Add to Benchmark Button
-  const addToBenchmarkButton = document.createElement('button');
-  addToBenchmarkButton.innerText = '+ Add to Benchmark';
-  addToBenchmarkButton.style.marginTop = '5px';
-  addToBenchmarkButton.style.width = '100%';
-  addToBenchmarkButton.style.padding = '8px';
-  addToBenchmarkButton.style.backgroundColor = '#4caf50';
-  addToBenchmarkButton.style.color = 'white';
-  addToBenchmarkButton.style.border = 'none';
-  addToBenchmarkButton.style.borderRadius = '5px';
-  addToBenchmarkButton.style.cursor = 'pointer';
-  addToBenchmarkButton.style.fontSize = '14px';
-  addToCartDiv.appendChild(addToBenchmarkButton);
+  // ➕ Add to Benchmark
+  const benchmarkBtn = createStyledButton('+ 📊 Add to Benchmark', '#28a745');
+  addToCartDiv.appendChild(benchmarkBtn);
 
-  addToBenchmarkButton.addEventListener('click', async () => {
+  benchmarkBtn.addEventListener('click', async () => {
     const listingId = window.location.pathname.split('/')[2];
 
     try {
       const response = await fetch(`${__API_URL__}/etsy/shopListing/analyze-listing`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listingId })
       });
 
-      console.log(response)
-
       const { result } = await response.json();
-      console.log(result)
 
       if (typeof chrome !== 'undefined' && chrome.storage?.local) {
         chrome.storage.local.get(['benchmarkProducts'], (res) => {
-          let products:any[] = res.benchmarkProducts || [];
-          if (!products.find(p => p.listing_id! === listingId)) {
+          let products: any[] = res.benchmarkProducts || [];
+          if (!products.find(p => p.listing_id === listingId)) {
             products.push(result);
-
             if (products.length > 5) {
               products = products.slice(products.length - 5);
             }
-
             chrome.storage.local.set({ benchmarkProducts: products });
           }
         });
@@ -128,4 +105,12 @@ waitForElement('[data-add-to-cart-button]', (addToCartDiv:any) => {
       console.error('Error adding to benchmark:', error);
     }
   });
+
+  // 🛍 Add to Shop Analysis (Visual Only)
+  const shopAnalysisBtn = createStyledButton('+ 🛍️ Add to Shop Analysis', '#17a2b8');
+  addToCartDiv.appendChild(shopAnalysisBtn);
+
+  // 📦 Add to Product Analysis (Visual Only)
+  const productAnalysisBtn = createStyledButton('+ 🎁 Add to Product Analysis', '#ffc107');
+  addToCartDiv.appendChild(productAnalysisBtn);
 });
