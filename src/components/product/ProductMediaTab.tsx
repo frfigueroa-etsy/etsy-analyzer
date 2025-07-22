@@ -17,8 +17,11 @@ interface ListingImage {
 const ProductMediaTab = ({ product }: Props) => {
   const [images, setImages] = useState<ListingImage[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [analysis, setAnalysis] = useState<Record<number, string>>({});
   const [videoLoading, setVideoLoading] = useState<Record<number, boolean>>({});
+
+  const [analysis, setAnalysis] = useState<Record<number, string>>({});
+  const [videoPrompts, setVideoPrompts] = useState<Record<number, string[]>>({});
+  const [analysisLoading, setAnalysisLoading] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -38,22 +41,40 @@ const ProductMediaTab = ({ product }: Props) => {
   }, [product.listing_id]);
 
   const handleAnalyzeImage = async (image: ListingImage) => {
-    try {
-      const res = await fetch(`${API_URL}/ai/analyze-image`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ imgUrl: image.url_fullxfull })
-      });
+  setAnalysisLoading(prev => ({ ...prev, [image.listing_image_id]: true }));
+  try {
+    const res = await fetch(`${API_URL}/ai/analyze-image`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ imgUrl: image.url_fullxfull })
+    });
 
-      const data = await res.json();
-      setAnalysis((prev) => ({ ...prev, [image.listing_image_id]: data.result || 'No response' }));
+    const data = await res.json();
+
+    // Parse prompts si vienen como string dentro de array
+    let prompts: string[] = [];
+    try {
+      const raw = data.videoPrompts?.[0] || '';
+      const cleaned = raw.replace(/```json|```/g, '');
+      const parsed = JSON.parse(cleaned);
+      prompts = parsed.videoPrompts?.map((p: string | Record<string, string>) =>
+        typeof p === 'string' ? p : Object.values(p).join('\n')
+      ) || [];
     } catch (err) {
-      console.error('Image analysis failed:', err);
-      setAnalysis((prev) => ({ ...prev, [image.listing_image_id]: 'Error analyzing image.' }));
+      console.warn('Error parsing video prompts:', err);
     }
-  };
+
+    setAnalysis(prev => ({ ...prev, [image.listing_image_id]: data.analysis || 'No analysis returned.' }));
+    setVideoPrompts(prev => ({ ...prev, [image.listing_image_id]: prompts }));
+  } catch (err) {
+    console.error('Image analysis failed:', err);
+    setAnalysis(prev => ({ ...prev, [image.listing_image_id]: 'Error analyzing image.' }));
+  } finally {
+    setAnalysisLoading(prev => ({ ...prev, [image.listing_image_id]: false }));
+  }
+};
 
 const handleGenerateVideo = async (image: ListingImage) => {
     const promptText = window.prompt('Describe the style or content of the video you want to generate for this product image:');
@@ -89,7 +110,7 @@ const handleGenerateVideo = async (image: ListingImage) => {
 
   return (
     <div>
-      <h6 className="fw-bold mb-3">📸 Product Media: {product.title}</h6>
+      <h6 className="fw-bold mb-3">📸 Product Media 2.0 : {product.title}</h6>
 
       {loading && <p className="text-muted">Loading images...</p>}
       {!loading && images.length === 0 && (
@@ -110,9 +131,17 @@ const handleGenerateVideo = async (image: ListingImage) => {
 
               <button
                 className="btn btn-sm btn-warning mb-2 w-100"
+                disabled={analysisLoading[img.listing_image_id]}
                 onClick={() => handleAnalyzeImage(img)}
               >
-                🧠 Analyze Image
+                {analysisLoading[img.listing_image_id] ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Generating...
+                  </>
+                ) : (
+                  '🧠 Analyze Image'
+                )}
               </button>
 
               <button
@@ -132,7 +161,21 @@ const handleGenerateVideo = async (image: ListingImage) => {
 
               {analysis[img.listing_image_id] && (
                 <div className="alert alert-info text-start small">
-                  {analysis[img.listing_image_id]}
+                  <strong>Analysis:</strong>
+                  <p>{analysis[img.listing_image_id]}</p>
+
+                  {videoPrompts[img.listing_image_id] && videoPrompts[img.listing_image_id].length > 0 && (
+                    <div>
+                      <strong>🎞️ Suggested Video Prompts:</strong>
+                      <ul className="mt-2">
+                        {videoPrompts[img.listing_image_id].map((prompt, idx) => (
+                          <li key={idx} className="mb-2">
+                            {prompt}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
