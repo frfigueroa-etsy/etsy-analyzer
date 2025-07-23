@@ -4,10 +4,11 @@ interface Props {
   title: string;
   price: number;
   description: string;
+  productUrl?: string;
   tags?: string[];
 }
 
-const DescriptionOverlay: React.FC<Props> = ({ title, price, description , tags = []}) => {
+const DescriptionOverlay: React.FC<Props> = ({ title, price, productUrl, description , tags = []}) => {
   const [expanded, setExpanded] = useState(false);
   const preview = description.slice(0, 100);
   const handleTagClick = async (tag: string) => {
@@ -36,7 +37,17 @@ const DescriptionOverlay: React.FC<Props> = ({ title, price, description , tags 
 
   return (
     <div className="position-absolute bottom-0 w-100 text-white p-3 z-2 description-overlay">
-      <h5 className="fw-bold">{title}</h5>
+      <h5 className="fw-bold">
+        {productUrl
+          ? ( <a
+              href={productUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white"
+            >{title}</a>)
+          : (<span>{title}</span>)
+        }
+      </h5>
       <p className="mb-1">💰 ${price.toFixed(2)} USD</p>
       <p className="small">
         {expanded ? description : preview}

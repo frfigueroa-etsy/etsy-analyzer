@@ -19,6 +19,9 @@
       "js": ["contentScript.js"]
     }
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src * data:;"
+  },
   "web_accessible_resources": [
     {
       "resources": ["results.html", "assets/*"],

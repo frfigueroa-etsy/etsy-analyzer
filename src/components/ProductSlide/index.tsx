@@ -17,7 +17,7 @@ const ProductSlide: React.FC<Props> = ({ product }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const res = await fetch(`${API_URL}/etsy/shopListing/listing/${product.listing_id}&includes=Images,Videos`);
+        const res = await fetch(`${API_URL}/etsy/shopListing/listing/${product.listing_id}&includes=Shop,Images,Videos`);
         const data = await res.json();
         setDetails(data);
       } catch (err) {
@@ -45,6 +45,7 @@ const ProductSlide: React.FC<Props> = ({ product }) => {
         />
         <DescriptionOverlay
             title={product.title}
+            productUrl={product.url}
             price={product.price.amount / 100}
             description={product.description}
             tags={product.tags}
@@ -53,7 +54,11 @@ const ProductSlide: React.FC<Props> = ({ product }) => {
 
         {/* Lat: 10% */}
         <div className="d-flex justify-content-center align-items-center" style={{ width: '10%' }}>
-            <ActionColumn likes={product.num_favorers} />
+            <ActionColumn 
+              likes={product.num_favorers}
+              profileImg={details?.shop?.icon_url_fullxfull ||''}
+              shopUrl={ details?.shop?.url || '#'}
+              productId={product.listing_id}/>
         </div>
     </div>
     );
