@@ -1,4 +1,4 @@
-import ProductSlide from '../product/ProductSlide'
+import ProductSlide from '../ProductSlide/index'
 import { ProductInterface } from '../../interfaces';
 
 interface Props {
@@ -9,10 +9,12 @@ const ProductFeedTab: React.FC<Props> = ({ products }) => {
   return (
     <div
       style={{
+        margin: 'auto',
         height: '100vh',
+        width: '96%',
         overflowY: 'scroll',
         scrollSnapType: 'y mandatory',
-        backgroundColor: '#000'
+        backgroundColor: '#fff'
       }}
     >
       {products.map((product) => (

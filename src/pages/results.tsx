@@ -9,7 +9,7 @@ import { ProductInterface } from '../interfaces';
 
 const ResultsPage = () => {
   const [products, setProducts] = useState<ProductInterface[]>([]);
-  const [activeTab, setActiveTab] = useState<'feed' | 'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop' | 'product'>('results');
+  const [activeTab, setActiveTab] = useState<'feed' | 'results' | 'tags' | 'trends'| 'benchmark' | 'sales'| 'shop' | 'product'>('feed');
 
   const loadProducts = () => {
     if (typeof chrome !== 'undefined' && chrome.storage?.local) {
