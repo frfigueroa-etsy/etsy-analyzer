@@ -10,6 +10,29 @@ interface Props {
 const DescriptionOverlay: React.FC<Props> = ({ title, price, description , tags = []}) => {
   const [expanded, setExpanded] = useState(false);
   const preview = description.slice(0, 100);
+  const handleTagClick = async (tag: string) => {
+    const cleanTag = tag.trim();
+    if (!cleanTag) return;
+
+    chrome.storage.local.get(['keyword'], (result) => {
+        const current = (result.keyword || '').trim();
+
+        const keywords = current
+        .split(/\s+/) // divide por cualquier cantidad de espacios
+        .filter(Boolean);
+
+        const existingWordsSet = new Set(keywords.map((k:string) => k.toLowerCase()));
+        const tagWords = cleanTag.split(/\s+/).filter(Boolean);
+
+        const newWords = tagWords.filter(word => !existingWordsSet.has(word.toLowerCase()));
+
+        if (newWords.length > 0) {
+        const updated = [...keywords, ...newWords].join(' ');
+        chrome.storage.local.set({ keyword: updated });
+        }
+    });
+    };
+
 
   return (
     <div className="position-absolute bottom-0 w-100 text-white p-3 z-2 description-overlay">
@@ -27,7 +50,8 @@ const DescriptionOverlay: React.FC<Props> = ({ title, price, description , tags 
             <span
                 key={idx}
                 className="badge tag-badge animate-tag mx-1"
-                style={{ animationDelay: `${idx * 100}ms` }}
+                onClick={() => handleTagClick(tag)}
+                style={{ animationDelay: `${idx * 100}ms` , cursor: 'pointer'}}
             >
                 #{tag}
             </span>
